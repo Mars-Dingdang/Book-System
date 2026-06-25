@@ -22,7 +22,7 @@ npm run db:seed
 默认管理员账号：
 
 - 学号：`admin`
-- 密码：`.env` 中 `ADMIN_INIT_PASSWORD`，默认 `admin123456`
+- 密码：`.env` 中 `ADMIN_INIT_PASSWORD`，默认 `123456`
 
 示例普通用户：
 
