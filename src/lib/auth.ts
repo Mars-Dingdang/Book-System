@@ -14,6 +14,9 @@ type SessionPayload = {
 };
 
 function getJwtSecret() {
+  if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET must be set in production");
+  }
   return process.env.JWT_SECRET || "dev-secret-change-me";
 }
 

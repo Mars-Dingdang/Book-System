@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
 import BookCopyActionButtons from "@/components/BookCopyActionButtons";
 import BookCopyStatusBadge from "@/components/BookCopyStatusBadge";
-import { getCurrentUser } from "@/lib/auth";
+import { requirePageAuth } from "@/lib/auth";
 import { parseCopyCodeFromQrText } from "@/lib/copyCode";
 import { prisma } from "@/lib/db";
 
 export default async function BookCopyPage({ params }: { params: { copyCode: string } }) {
-  const user = await getCurrentUser();
+  const user = await requirePageAuth();
   const copyCode = parseCopyCodeFromQrText(decodeURIComponent(params.copyCode));
   const copy = await prisma.bookCopy.findUnique({
     where: { copyCode },
@@ -28,7 +28,7 @@ export default async function BookCopyPage({ params }: { params: { copyCode: str
         <p>状态：<BookCopyStatusBadge status={copy.status} /></p>
         {currentRecord ? <p className="muted">当前借阅人：{currentRecord.user.name}</p> : null}
       </div>
-      {user ? <BookCopyActionButtons copyCode={copy.copyCode} canReturn={canReturn} /> : <p className="muted">请先登录后借还书。</p>}
+      <BookCopyActionButtons copyCode={copy.copyCode} canReturn={canReturn} />
     </div>
   );
 }

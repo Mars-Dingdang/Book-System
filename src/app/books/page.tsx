@@ -1,7 +1,9 @@
 import BookCard from "@/components/BookCard";
+import { requirePageAuth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
 export default async function BooksPage({ searchParams }: { searchParams: { q?: string; category?: string } }) {
+  await requirePageAuth();
   const q = searchParams.q?.trim();
   const category = searchParams.category?.trim();
   const books = await prisma.book.findMany({

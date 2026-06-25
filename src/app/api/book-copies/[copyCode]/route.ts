@@ -1,8 +1,12 @@
+import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { fail, ok } from "@/lib/apiResponse";
 import { parseCopyCodeFromQrText } from "@/lib/copyCode";
 
 export async function GET(_: Request, { params }: { params: { copyCode: string } }) {
+  const user = await getCurrentUser();
+  if (!user) return fail("未登录", 401);
+
   const copyCode = parseCopyCodeFromQrText(decodeURIComponent(params.copyCode));
   const copy = await prisma.bookCopy.findUnique({
     where: { copyCode },

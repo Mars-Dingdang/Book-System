@@ -1,8 +1,12 @@
 import { Prisma } from "@prisma/client";
+import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { ok } from "@/lib/apiResponse";
+import { fail, ok } from "@/lib/apiResponse";
 
 export async function GET(request: Request) {
+  const user = await getCurrentUser();
+  if (!user) return fail("未登录", 401);
+
   const { searchParams } = new URL(request.url);
   const q = searchParams.get("q")?.trim();
   const category = searchParams.get("category")?.trim();

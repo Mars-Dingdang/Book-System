@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import BookCopyStatusBadge from "@/components/BookCopyStatusBadge";
+import { requirePageAuth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
 export default async function BookDetailPage({ params }: { params: { id: string } }) {
+  await requirePageAuth();
   const book = await prisma.book.findUnique({
     where: { id: Number(params.id) },
     include: { copies: { orderBy: { copyCode: "asc" } } },
