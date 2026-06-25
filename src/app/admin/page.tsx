@@ -27,6 +27,7 @@ export default async function AdminPage() {
           <Link className="button secondary" href="/admin/books">书目管理</Link>
           <Link className="button secondary" href="/admin/copies">实体书管理</Link>
           <Link className="button secondary" href="/admin/borrow-records">借阅记录</Link>
+          <Link className="button secondary" href="/admin/users">用户管理</Link>
         </div>
       </div>
       <div className="grid">

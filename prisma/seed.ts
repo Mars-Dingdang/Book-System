@@ -12,26 +12,30 @@ async function main() {
 
   await prisma.user.upsert({
     where: { studentId: "admin" },
-    update: { passwordHash: adminHash, role: "ADMIN", isActive: true },
+    update: { passwordHash: adminHash, role: "ADMIN", isActive: true, approvalStatus: "APPROVED" },
     create: {
+      username: "admin",
       name: "管理员",
       studentId: "admin",
       className: "化学竞赛教室",
       passwordHash: adminHash,
       role: "ADMIN",
+      approvalStatus: "APPROVED",
     },
   });
 
   await prisma.user.upsert({
-    where: { studentId: "20240001" },
+    where: { studentId: "250851" },
     update: {},
     create: {
+      username: "B2025000001",
       name: "张三",
-      studentId: "20240001",
+      studentId: "250851",
       className: "高二竞赛班",
       email: "zhangsan@example.com",
       passwordHash: userHash,
       role: "USER",
+      approvalStatus: "APPROVED",
     },
   });
 

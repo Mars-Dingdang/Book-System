@@ -26,7 +26,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Link href="/borrow/scan">借书</Link>
             <Link href="/return/scan">还书</Link>
             <Link href="/me/borrowed">我的借阅</Link>
+            {user ? <Link href="/me/profile">个人中心</Link> : null}
             {user?.role === "ADMIN" ? <Link href="/admin">后台</Link> : null}
+            {user?.role === "ADMIN" ? <Link href="/admin/users">用户管理</Link> : null}
             {user ? <span className="muted">{user.name}</span> : <Link href="/login">登录</Link>}
             {user ? <LogoutButton /> : null}
           </div>

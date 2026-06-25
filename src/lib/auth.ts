@@ -50,8 +50,8 @@ export async function getCurrentUser() {
   try {
     const payload = jwt.verify(token, getJwtSecret()) as SessionPayload;
     return prisma.user.findFirst({
-      where: { id: payload.userId, isActive: true },
-      select: { id: true, name: true, studentId: true, className: true, email: true, role: true, isActive: true },
+      where: { id: payload.userId, isActive: true, approvalStatus: "APPROVED" },
+      select: { id: true, username: true, name: true, studentId: true, className: true, phone: true, email: true, role: true, isActive: true, approvalStatus: true },
     });
   } catch {
     return null;

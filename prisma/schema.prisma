@@ -9,13 +9,16 @@ datasource db {
 
 model User {
   id            Int            @id @default(autoincrement())
+  username      String?        @unique
   name          String
   studentId     String         @unique
   className     String?
+  phone         String?
   email         String?
   passwordHash  String
   role          String         @default("USER")
   isActive      Boolean        @default(true)
+  approvalStatus String        @default("APPROVED")
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   borrowRecords BorrowRecord[]
