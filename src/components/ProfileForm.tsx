@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import PasswordInput from "./PasswordInput";
 
 type ProfileFormProps = {
   user: {
@@ -85,9 +86,9 @@ export default function ProfileForm({ user }: ProfileFormProps) {
 
       <form className="panel stack" onSubmit={changePassword}>
         <h2>修改密码</h2>
-        <label>当前密码<input name="currentPassword" type="password" required /></label>
-        <label>新密码<input name="newPassword" type="password" minLength={6} required /></label>
-        <label>确认新密码<input name="confirmPassword" type="password" minLength={6} required /></label>
+        <PasswordInput label="当前密码" name="currentPassword" required />
+        <PasswordInput label="新密码" name="newPassword" minLength={6} required />
+        <PasswordInput label="确认新密码" name="confirmPassword" minLength={6} required />
         <button type="submit">更新密码</button>
       </form>
     </div>

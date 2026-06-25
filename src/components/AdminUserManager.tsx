@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import PasswordInput from "./PasswordInput";
 
 type AdminUser = {
   id: number;
@@ -145,7 +146,7 @@ export default function AdminUserManager({ users }: Props) {
                   <option value="REJECTED">已拒绝</option>
                 </select>
               </label>
-              <label>重置密码<input name="password" type="password" minLength={6} placeholder="留空则不修改" /></label>
+              <PasswordInput label="重置密码" name="password" minLength={6} placeholder="留空则不修改" />
               <label className="inline-check"><input name="isActive" type="checkbox" defaultChecked={user.isActive} disabled={user.role === "ADMIN"} /> 启用账号</label>
               <button type="submit">保存</button>
             </form>

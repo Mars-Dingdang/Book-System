@@ -167,7 +167,6 @@ textarea {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
   gap: 18px;
-  align-items: start;
 }
 
 .book-board,
@@ -368,6 +367,48 @@ input:disabled {
   color: #5f5558;
 }
 
+.password-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  position: relative;
+}
+
+.password-field input {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.password-toggle {
+  align-self: stretch;
+  background: var(--primary-soft);
+  border: 1px solid var(--line);
+  border-left: 0;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  color: var(--primary-dark);
+  min-height: 42px;
+  padding: 0 12px;
+}
+
+.password-toggle svg {
+  fill: none;
+  height: 20px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+  width: 20px;
+}
+
+.password-toggle .eye-slash {
+  stroke-width: 2.4;
+}
+
+.password-toggle:focus {
+  box-shadow: 0 0 0 3px rgba(179, 38, 60, 0.12);
+  outline: none;
+}
+
 textarea {
   min-height: 110px;
   resize: vertical;
@@ -525,6 +566,10 @@ th {
   .dashboard-grid,
   .profile-layout {
     grid-template-columns: 1fr;
+  }
+
+  .dashboard-grid {
+    align-items: start;
   }
 
   .book-scroll {
