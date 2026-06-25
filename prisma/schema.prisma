@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  name          String
+  studentId     String         @unique
+  className     String?
+  email         String?
+  passwordHash  String
+  role          String         @default("USER")
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  borrowRecords BorrowRecord[]
+  auditLogs     AuditLog[]
+}
+
+model Book {
+  id          Int        @id @default(autoincrement())
+  title       String
+  author      String?
+  publisher   String?
+  category    String?
+  isbn        String?
+  description String?
+  sourceType  String     @default("ORIGINAL")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  copies      BookCopy[]
+}
+
+model BookCopy {
+  id            Int            @id @default(autoincrement())
+  bookId        Int
+  copyCode      String         @unique
+  status        String         @default("AVAILABLE")
+  location      String?
+  qrCodeUrl     String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  book          Book           @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  borrowRecords BorrowRecord[]
+}
+
+model BorrowRecord {
+  id         Int          @id @default(autoincrement())
+  userId     Int
+  bookCopyId Int
+  borrowedAt DateTime     @default(now())
+  dueAt      DateTime?
+  returnedAt DateTime?
+  status     String       @default("BORROWED")
+  user       User         @relation(fields: [userId], references: [id])
+  bookCopy   BookCopy     @relation(fields: [bookCopyId], references: [id])
+}
+
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int?
+  action     String
+  targetType String?
+  targetId   String?
+  detail     String?
+  createdAt  DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id])
+}
