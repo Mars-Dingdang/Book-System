@@ -108,14 +108,16 @@ function buildPdf(labels: Awaited<ReturnType<typeof makeLabelJpeg>>[]) {
   const rows = 7;
   const perPage = cols * rows;
   const pageCount = Math.ceil(labels.length / perPage);
-  const imageStart = 4 + pageCount * 2;
+  const catalogId = 1;
+  const pagesId = 2;
+  const infoId = 3;
+  const imageStart = 4;
   const imageIds = labels.map((_, index) => imageStart + index);
   const contentStart = imageStart + labels.length;
   const contentIds = Array.from({ length: pageCount }, (_, index) => contentStart + index);
   const pageStart = contentStart + pageCount;
   const pageIds = Array.from({ length: pageCount }, (_, index) => pageStart + index);
-  const pagesId = pageStart + pageCount;
-  const catalogId = pagesId + 1;
+  const lastObjectId = pageStart + pageCount - 1;
 
   add("%PDF-1.4\n%\xE2\xE3\xCF\xD3\n");
 
@@ -137,7 +139,7 @@ function buildPdf(labels: Awaited<ReturnType<typeof makeLabelJpeg>>[]) {
       const y = pageHeight - margin - labelHeight - row * (labelHeight + gapY);
       commands.push(`q ${labelWidth} 0 0 ${labelHeight} ${x} ${y} cm /Im${start + localIndex} Do Q`);
     });
-    object(contentIds[pageIndex], commands.join("\n"));
+    object(contentIds[pageIndex], encoder.encode(commands.join("\n")));
   }
 
   pageIds.forEach((pageId, pageIndex) => {
@@ -148,22 +150,20 @@ function buildPdf(labels: Awaited<ReturnType<typeof makeLabelJpeg>>[]) {
       .join(" ");
     object(
       pageId,
-      `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /XObject << ${resources} >> /Font << /F1 2 0 R >> >> /Contents ${contentIds[pageIndex]} 0 R >>`,
+      `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /XObject << ${resources} >> >> /Contents ${contentIds[pageIndex]} 0 R >>`,
     );
   });
 
   object(1, `<< /Type /Catalog /Pages ${pagesId} 0 R >>`);
-  object(2, "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
-  object(3, `<< /Producer (${escapePdfText("Book-System")}) >>`);
   object(pagesId, `<< /Type /Pages /Kids [${pageIds.map((id) => `${id} 0 R`).join(" ")}] /Count ${pageCount} >>`);
-  object(catalogId, `<< /Type /Catalog /Pages ${pagesId} 0 R >>`);
+  object(infoId, `<< /Producer (${escapePdfText("Book-System")}) >>`);
 
   const xref = length;
-  add(`xref\n0 ${catalogId + 1}\n0000000000 65535 f \n`);
-  for (let i = 1; i <= catalogId; i += 1) {
+  add(`xref\n0 ${lastObjectId + 1}\n0000000000 65535 f \n`);
+  for (let i = 1; i <= lastObjectId; i += 1) {
     add(`${String(offsets[i] || 0).padStart(10, "0")} 00000 n \n`);
   }
-  add(`trailer\n<< /Size ${catalogId + 1} /Root ${catalogId} 0 R /Info 3 0 R >>\nstartxref\n${xref}\n%%EOF`);
+  add(`trailer\n<< /Size ${lastObjectId + 1} /Root ${catalogId} 0 R /Info ${infoId} 0 R >>\nstartxref\n${xref}\n%%EOF`);
 
   const blobParts = chunks.map((chunk) => {
     const copy = new Uint8Array(chunk.byteLength);
