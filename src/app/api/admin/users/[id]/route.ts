@@ -43,3 +43,21 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 
   return ok(user, "用户信息已更新");
 }
+
+export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+  const admin = await requireAdmin();
+  const id = Number(params.id);
+  if (!Number.isInteger(id)) return fail("用户不存在", 404);
+  if (id === admin.id) return fail("不能删除当前登录的管理员账号", 400);
+
+  const user = await prisma.user.findUnique({
+    where: { id },
+    select: { id: true, role: true, borrowRecords: { select: { id: true }, take: 1 } },
+  });
+  if (!user) return fail("用户不存在", 404);
+  if (user.role === "ADMIN") return fail("管理员账号不能删除", 400);
+  if (user.borrowRecords.length > 0) return fail("该用户已有借阅记录，不能删除；可改为停用账号", 400);
+
+  await prisma.user.delete({ where: { id } });
+  return ok({ id }, "用户已删除");
+}

@@ -74,6 +74,20 @@ export default function AdminUserManager({ users }: Props) {
     await updateUser(user.id, payload);
   }
 
+  async function deleteUser(user: AdminUser) {
+    if (!window.confirm(`确定删除用户“${user.name}”吗？此操作不可恢复。`)) return;
+    setMessage("");
+    setError("");
+    const res = await fetch(`/api/admin/users/${user.id}`, { method: "DELETE" });
+    const body = await res.json();
+    if (!body.success) {
+      setError(body.message);
+      return;
+    }
+    setMessage(body.message);
+    router.refresh();
+  }
+
   async function importUsers(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setMessage("");
@@ -149,6 +163,7 @@ export default function AdminUserManager({ users }: Props) {
               <PasswordInput label="重置密码" name="password" minLength={6} placeholder="留空则不修改" />
               <label className="inline-check"><input name="isActive" type="checkbox" defaultChecked={user.isActive} disabled={user.role === "ADMIN"} /> 启用账号</label>
               <button type="submit">保存</button>
+              <button className="danger" type="button" disabled={user.role === "ADMIN"} onClick={() => deleteUser(user)}>删除</button>
             </form>
           ))}
         </div>
